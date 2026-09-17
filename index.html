@@ -44,7 +44,7 @@
       border-radius: 4px;
     }
 
-    /* Thermal Printer Voucher Styling (72mm / 80mm standard width with strict vertical column alignment) */
+    /* Thermal Printer Voucher Styling (72mm / 80mm standard width) */
     @media print {
       body * {
         display: none !important;
@@ -80,7 +80,7 @@
     }
   </style>
 </head>
-<body class="bg-slate-100 h-screen flex flex-col overflow-hidden select-none" onclick="checkBarcodeFocus(event)">
+<body class="bg-slate-100 h-screen flex flex-col overflow-hidden select-none">
 
   <!-- Toast Notification -->
   <div id="toast" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-slate-900 text-white px-5 py-2.5 rounded-full shadow-2xl hidden text-xs font-semibold flex items-center space-x-2 transition-all">
@@ -103,7 +103,7 @@
         <i class="fa-brands fa-bluetooth text-blue-400 text-sm"></i>
         <span class="hidden sm:inline text-[11px]">Printer</span>
       </button>
-      <!-- Developer Info / Support Button -->
+      <!-- Support Button -->
       <button onclick="openDeveloperModal()" class="text-slate-300 hover:text-white transition flex items-center gap-1 text-xs bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-700" title="Developer Info">
         <i class="fa-solid fa-headset text-emerald-400 text-sm"></i>
         <span class="hidden sm:inline text-[11px]">Support</span>
@@ -158,7 +158,7 @@
         <div class="flex items-center gap-1.5 flex-wrap">
           <button onclick="downloadProductSampleCSV()" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold"><i class="fa-solid fa-download mr-1"></i> Sample CSV</button>
           <label class="px-2.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold cursor-pointer">
-            <i class="fa-solid fa-file-arrow-up mr-1"></i> Bulk Upload
+            <i class="fa-solid fa-file-arrow-up mr-1"></i> Bulk Upload CSV
             <input type="file" accept=".csv" class="hidden" onchange="handleProductCSVUpload(event)">
           </label>
           <button onclick="openProductModal()" class="px-3 py-1.5 bg-slate-900 text-white rounded-lg text-xs font-semibold"><i class="fa-solid fa-plus mr-1"></i> Add Product</button>
@@ -201,7 +201,7 @@
         </div>
       </div>
 
-      <!-- Total Sales Amount Summary Card (Calendar Filtered View) -->
+      <!-- Total Sales Summary Card -->
       <div class="mb-3 shrink-0">
         <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 flex justify-between items-center shadow-sm">
           <div>
@@ -290,7 +290,7 @@
     </div>
   </div>
 
-  <!-- Native Bluetooth Connection Modal (For APK & Web Selection) -->
+  <!-- Native Bluetooth Connection Modal -->
   <div id="bluetooth-modal" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-2xl p-5 w-full max-w-sm shadow-2xl space-y-4">
       <div class="flex justify-between items-center">
@@ -300,13 +300,12 @@
         <button onclick="closeBluetoothModal()" class="text-gray-400 hover:text-slate-600 text-xs font-bold">Close</button>
       </div>
       
-      <div id="native-scan-action" class="bg-slate-50 border rounded-xl p-3 text-center">
+      <div class="bg-slate-50 border rounded-xl p-3 text-center">
         <button onclick="scanBluetoothDevices()" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow-sm">
           <i class="fa-solid fa-magnifying-glass mr-1"></i> Scan Paired Devices
         </button>
       </div>
 
-      <!-- Device List Container -->
       <div id="bluetooth-device-list" class="space-y-2 max-h-48 overflow-y-auto pr-1">
         <p class="text-gray-400 text-center text-xs py-4">Click scan to find available printers.</p>
       </div>
@@ -355,10 +354,10 @@
     </div>
   </div>
 
-  <!-- Thermal Printer Voucher Layout -->
+  <!-- Thermal Printer Voucher Layout (Hidden until print) -->
   <div id="thermal-receipt" class="hidden">
     <div style="text-align:center; font-weight:bold; font-size:14px; margin-bottom:2px;">သစ္စာနီ ဆေးဆိုင်</div>
-    <div style="text-align:center; font-size:10px; color:#111;"> 121 နှင့် ၁၂၂ လမ်းကြား၊ ၅၈ လမ်း၊ မန္တလေးမြို့။</div>
+    <div style="text-align:center; font-size:10px; color:#111;">121 နှင့် ၁၂၂ လမ်းကြား၊ ၅၈ လမ်း၊ မန္တလေးမြို့။</div>
     <div style="text-align:center; font-size:10px; color:#111;">Ph: 09 40857 0248</div>
     <div id="receipt-date" style="text-align:center; font-size:10px; color:#111; margin-bottom:4px;"></div>
     
@@ -441,32 +440,18 @@
       setTimeout(() => t.classList.add('hidden'), 2500);
     }
 
-    function checkBarcodeFocus(e) {
-      // Safe placeholder handler to prevent reference errors on body click
-    }
+    function openDeveloperModal() { document.getElementById('developer-modal').classList.remove('hidden'); }
+    function closeDeveloperModal() { document.getElementById('developer-modal').classList.add('hidden'); }
+    function closeBluetoothModal() { document.getElementById('bluetooth-modal').classList.add('hidden'); }
 
-    function openDeveloperModal() {
-      document.getElementById('developer-modal').classList.remove('hidden');
-    }
-
-    function closeDeveloperModal() {
-      document.getElementById('developer-modal').classList.add('hidden');
-    }
-
-    function closeBluetoothModal() {
-      document.getElementById('bluetooth-modal').classList.add('hidden');
-    }
-
-    // Hybrid Bluetooth Connection Handler (Handles both Android APK and Web Browsers)
+    // Bluetooth Connection Handler for Android APK & Web Browsers
     async function connectBluetoothPrinter() {
       const isNativeApp = window.Capacitor && window.Capacitor.isNativePlatform();
 
       if (isNativeApp || window.bluetoothSerial) {
-        // Open native pairing selection modal for Android APK builds
         document.getElementById('bluetooth-modal').classList.remove('hidden');
         scanBluetoothDevices();
       } else {
-        // Web Browser fallback via standard Web Bluetooth API
         try {
           if (!navigator.bluetooth) {
             showToast('Web Bluetooth is not supported on this browser.');
@@ -480,7 +465,6 @@
           bluetoothPrinterDevice = device;
           showToast('Connected: ' + (device.name || 'Printer'));
         } catch (error) {
-          console.log('Bluetooth error:', error);
           showToast('Printer connection cancelled or failed.');
         }
       }
@@ -494,7 +478,7 @@
         window.bluetoothSerial.list(
           function(devices) {
             if (devices.length === 0) {
-              listContainer.innerHTML = `<p class="text-gray-400 text-center text-xs py-4">No paired Bluetooth printers found. Please pair your printer in Android Settings first.</p>`;
+              listContainer.innerHTML = `<p class="text-gray-400 text-center text-xs py-4">No paired printers found. Please pair your Bluetooth printer in Android settings.</p>`;
               return;
             }
             listContainer.innerHTML = devices.map(dev => `
@@ -508,11 +492,11 @@
             `).join('');
           },
           function(error) {
-            listContainer.innerHTML = `<p class="text-red-500 text-center text-xs py-4">Error loading devices. Turn on Bluetooth.</p>`;
+            listContainer.innerHTML = `<p class="text-red-500 text-center text-xs py-4">Error loading devices. Make sure Bluetooth is enabled.</p>`;
           }
         );
       } else {
-        listContainer.innerHTML = `<p class="text-gray-500 text-center text-xs py-4">Native Bluetooth bridge active only in built APK. Use Web browser pairing above or test on device.</p>`;
+        listContainer.innerHTML = `<p class="text-gray-500 text-center text-xs py-4">Native Bluetooth available when built as Android APK with bluetoothSerial plugin.</p>`;
       }
     }
 
@@ -713,6 +697,7 @@
       renderCart();
       renderSellingPortal();
 
+      // Trigger Print (handles plug-in cable / USB OTG thermal printing via standard print stream or window dialog)
       window.print();
       showToast('Sale successful & voucher printed!');
       autoSyncQueue();
@@ -727,7 +712,7 @@
       if (pendingQueue.length === 0) return;
 
       try {
-        let res = await fetch(WEB_APP_URL, {
+        await fetch(WEB_APP_URL, {
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -736,9 +721,8 @@
         
         queue.forEach(o => o.synced = true);
         localStorage.setItem('offline_sales_queue', JSON.stringify(queue));
-        showToast('Offline sales successfully synced to cloud!');
       } catch (e) {
-        console.log('Background sync waiting for stable connection...');
+        console.log('Background sync waiting for connection...');
       }
     }
 
@@ -958,14 +942,6 @@
         event.target.value = '';
       };
       reader.readAsText(file);
-    }
-
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch((err) => {
-          console.log('Service Worker registration failed: ', err);
-        });
-      });
     }
   </script>
 </body>
